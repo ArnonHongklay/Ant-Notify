@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
 public class ReceiveSms extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -35,5 +37,11 @@ public class ReceiveSms extends BroadcastReceiver {
         }
     }
 
-    public void onSend(Context context, Intent intent) {}
+    private void sendCollectData() {
+        String url = "https://api.myjson.com/bins/kp9wz";
+
+//        JSONObjectRequest request = new JSONObjectRe
+    }
+
+//    public void onSend(Context context, Intent intent) {}
 }

@@ -3,6 +3,7 @@
     package="com.example.paymentdetection">
 
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
+
     <user-permission android:name="android.permission.INTERNET" />
     <user-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
