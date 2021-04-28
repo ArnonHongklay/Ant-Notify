@@ -14,7 +14,7 @@ public class ReceiveSms extends BroadcastReceiver {
         if(intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) {
             Bundle bundle = intent.getExtras();
             SmsMessage[] msgs = null;
-            String msg_from;
+            String msgFrom;
 
             if(bundle != null) {
                 try {
@@ -23,10 +23,10 @@ public class ReceiveSms extends BroadcastReceiver {
 
                     for(int i = 0; i < msgs.length; i++) {
                         msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
-                        msg_from = msgs[i].getOriginatingAddress();
+                        msgFrom = msgs[i].getOriginatingAddress();
                         String msgBody = msgs[i].getMessageBody();
 
-                        Toast.makeText(context, "FROM: " + msg_from + ", Body: " + msgBody, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "FROM: " + msgFrom + ", Body: " + msgBody, Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -34,4 +34,6 @@ public class ReceiveSms extends BroadcastReceiver {
             }
         }
     }
+
+    public void onSend(Context context, Intent intent) {}
 }
