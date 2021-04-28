@@ -7,7 +7,12 @@ import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.Response;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 public class ReceiveSms extends BroadcastReceiver {
     @Override
@@ -17,7 +22,9 @@ public class ReceiveSms extends BroadcastReceiver {
             Bundle bundle = intent.getExtras();
             SmsMessage[] msgs = null;
             String msgFrom;
-            String url = "http://localhost/api/posts";
+
+            RequestQueue queue = Volley.newRequestQueue(context);
+            String url ="https://www.google.com";
 
             if(bundle != null) {
                 try {
@@ -29,7 +36,28 @@ public class ReceiveSms extends BroadcastReceiver {
                         msgFrom = msgs[i].getOriginatingAddress();
                         String msgBody = msgs[i].getMessageBody();
 
+                        // Request a string response from the provided URL.
+                        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                                new Response.Listener<String>() {
+                                    @Override
+                                    public void onResponse(String response) {
+                                        // Display the first 500 characters of the response string.
+//                            textView.setText("Response is: "+ response.substring(0,500));
+
+
+                                    }
+                                }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+//                    textView.setText("That didn't work!");
+                            }
+                        });
+
                         Toast.makeText(context, "FROM: " + msgFrom + ", Body: " + msgBody, Toast.LENGTH_SHORT).show();
+// Add the request to the RequestQueue.
+                        queue.add(stringRequest);
+
+
                     }
 
                 } catch (Exception e) {
@@ -38,8 +66,5 @@ public class ReceiveSms extends BroadcastReceiver {
             }
         }
     }
-
-
-
 //    public void onSend(Context context, Intent intent) {}
 }
