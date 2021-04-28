@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.widget.Toast;
 
-import org.json.JSONObject;
+import com.google.android.gms.common.api.Response;
 
 public class ReceiveSms extends BroadcastReceiver {
     @Override
@@ -17,6 +17,7 @@ public class ReceiveSms extends BroadcastReceiver {
             Bundle bundle = intent.getExtras();
             SmsMessage[] msgs = null;
             String msgFrom;
+            String url = "http://localhost/api/posts";
 
             if(bundle != null) {
                 try {
@@ -30,6 +31,7 @@ public class ReceiveSms extends BroadcastReceiver {
 
                         Toast.makeText(context, "FROM: " + msgFrom + ", Body: " + msgBody, Toast.LENGTH_SHORT).show();
                     }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -37,11 +39,7 @@ public class ReceiveSms extends BroadcastReceiver {
         }
     }
 
-    private void sendCollectData() {
-        String url = "https://api.myjson.com/bins/kp9wz";
 
-//        JSONObjectRequest request = new JSONObjectRe
-    }
 
 //    public void onSend(Context context, Intent intent) {}
 }
