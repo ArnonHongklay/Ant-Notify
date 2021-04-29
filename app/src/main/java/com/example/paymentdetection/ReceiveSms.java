@@ -32,7 +32,7 @@ public class ReceiveSms extends BroadcastReceiver {
 
 
             RequestQueue requestQueue = Volley.newRequestQueue(context);
-            String URL ="http://192.168.1.45/item/add";
+            String URL ="http://192.168.1.40/item/add";
             String requestBody = "";
 
 //            Bundle bundle = intent.getExtras();
@@ -54,6 +54,19 @@ public class ReceiveSms extends BroadcastReceiver {
 //                }
 //            }
 
+
+//            OkHttpClient client = new OkHttpClient().newBuilder()
+//                    .build();
+//            MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+//            RequestBody body = RequestBody.create(mediaType, "name=123123123");
+//            Request request = new Request.Builder()
+//                    .url("http://192.168.1.40/item/add")
+//                    .method("POST", body)
+//                    .addHeader("Content-Type", "application/x-www-form-urlencoded")
+//                    .build();
+//            Response response = client.newCall(request).execute();
+
+
             StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
@@ -67,19 +80,15 @@ public class ReceiveSms extends BroadcastReceiver {
             }) {
                 @Override
                 public String getBodyContentType() {
-                    return "application/json; charset=utf-8";
+                    return "application/x-www-form-urlencoded";
                 }
 
                 @Override
                 public byte[] getBody() throws AuthFailureError {
                     try {
-                        JSONObject jsonBody = new JSONObject();
 
-                        jsonBody.put("name", "Android Volley Demo");
 
-                        Log.i("VOLLEY", jsonBody.toString());
-
-                        return jsonBody.toString() == null ? null : jsonBody.toString().getBytes("utf-8");
+                        return "{\"name\":\"xxxxxxx\"}";
 
                     } catch (UnsupportedEncodingException | JSONException uee) {
                         VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");

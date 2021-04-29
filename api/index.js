@@ -25,10 +25,12 @@ app.get('/', (req, res) => {
 });
 
 app.post('/item/add', (req, res) => {
-  console.log(res);
+  console.log(req.body);
+
   const newItem = new Item({
     name: req.body.name
   });
+
 
   newItem.save().then(item => res.redirect('/'));
 });
