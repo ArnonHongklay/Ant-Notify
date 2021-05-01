@@ -23,6 +23,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ReceiveSms extends BroadcastReceiver {
     @Override
@@ -31,106 +33,75 @@ public class ReceiveSms extends BroadcastReceiver {
         if(intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) {
 
 
-            RequestQueue requestQueue = Volley.newRequestQueue(context);
-            String URL ="http://192.168.1.40/item/add";
+//            RequestQueue requestQueue = Volley.newRequestQueue(context);
+//            String URL ="http://192.168.1.40/item/add";
             String requestBody = "";
 
-//            Bundle bundle = intent.getExtras();
-//            SmsMessage[] msgs = null;
-//            String msgFrom;
-//            if(bundle != null) {
-//                try {
-//                    Object[] pdus = (Object[]) bundle.get("pdus");
-//                    msgs = new SmsMessage[pdus.length];
-//
-//                    for(int i = 0; i < msgs.length; i++) {
-//                        msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
-//                        msgFrom = msgs[i].getOriginatingAddress();
-//                        String msgBody = msgs[i].getMessageBody();
-//                    }
-//
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
 
+            Bundle bundle = intent.getExtras();
+            SmsMessage[] msgs = null;
+            String msgFrom;
 
-//            OkHttpClient client = new OkHttpClient().newBuilder()
-//                    .build();
-//            MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-//            RequestBody body = RequestBody.create(mediaType, "name=123123123");
-//            Request request = new Request.Builder()
-//                    .url("http://192.168.1.40/item/add")
-//                    .method("POST", body)
-//                    .addHeader("Content-Type", "application/x-www-form-urlencoded")
-//                    .build();
-//            Response response = client.newCall(request).execute();
+            if(bundle != null) {
+                try {
+                    Object[] pdus = (Object[]) bundle.get("pdus");
+                    msgs = new SmsMessage[pdus.length];
 
+                    for(int i = 0; i < msgs.length; i++) {
+                        msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
+                        msgFrom = msgs[i].getOriginatingAddress();
+                        String msgBody = msgs[i].getMessageBody();
 
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    Log.i("VOLLEY", response);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e("VOLLEY", error.toString());
-                }
-            }) {
-                @Override
-                public String getBodyContentType() {
-                    return "application/x-www-form-urlencoded";
-                }
-
-                @Override
-                public byte[] getBody() throws AuthFailureError {
-                    try {
-
-
-                        return "{\"name\":\"xxxxxxx\"}";
-
-                    } catch (UnsupportedEncodingException | JSONException uee) {
-                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
-                        return null;
+                        postNewComment(context, msgBody);
+                        Toast.makeText(context, "FROM: " + msgFrom + ", Body: " + msgBody, Toast.LENGTH_SHORT).show();
                     }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-                @Override
-                protected Response<String> parseNetworkResponse(NetworkResponse response) {
-                    String responseString = "";
-                    if (response != null) {
-                        responseString = String.valueOf(response.statusCode);
-                        // can get more details such as response.headers
-                    }
-                    return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
-                }
-            };
-
-            requestQueue.add(stringRequest);
-
-
-//            // Request a string response from the provided URL.
-//            StringRequest stringRequest = new StringRequest(Request.Method.POST, url + "/item/add",
-//                    new Response.Listener<String>() {
-//
-//                        @Override
-//                        public void onResponse(String response) {
-//                            // Display the first 500 characters of the response string.
-//                            Log.e(TAG, "Response is: "+ response);
-//                        }
-//                    }, new Response.ErrorListener() {
-//                @Override
-//                public void onErrorResponse(VolleyError error) {
-//                    Log.e(TAG, "That didn't work!" + error);
-//                }
-//            });
-//
-//            Toast.makeText(context, "FROM: " + msgFrom + ", Body: " + msgBody, Toast.LENGTH_SHORT).show();
-//// Add the request to the RequestQueue.
-//            queue.add(stringRequest);
-
-
+            }
         }
     }
+
+    public static void postNewComment(Context context, final String message){
+        RequestQueue queue = Volley.newRequestQueue(context);
+        StringRequest sr = new StringRequest(Request.Method.POST,"http://192.168.1.45/item/add", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.i("VOLLEY", response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("VOLLEY", error.toString());
+            }
+        }){
+            @Override
+            protected Map<String,String> getParams(){
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("name", message);
+//                params.put("pass",userAccount.getPassword());
+//                params.put("comment", Uri.encode(comment));
+//                params.put("comment_post_ID",String.valueOf(postId));
+//                params.put("blogId",String.valueOf(blogId));
+
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("Content-Type","application/x-www-form-urlencoded");
+                return params;
+            }
+        };
+
+        queue.add(sr);
+    }
+
+//    public interface PostCommentResponseListener {
+//        public void requestStarted();
+//        public void requestCompleted();
+//        public void requestEndedWithError(VolleyError error);
+//    }
 }
